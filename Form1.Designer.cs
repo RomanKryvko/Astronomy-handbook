@@ -35,6 +35,7 @@
             tabPage1 = new TabPage();
             lblStarsCount = new Label();
             groupBox2 = new GroupBox();
+            lblEmptyStarError = new Label();
             txtFindStar = new TextBox();
             btnFindStar = new Button();
             groupBox1 = new GroupBox();
@@ -50,6 +51,8 @@
             dataGridViewTextBoxColumn6 = new DataGridViewTextBoxColumn();
             starBindingSource = new BindingSource(components);
             tabPage2 = new TabPage();
+            lblVisibleObjectsCount = new Label();
+            label3 = new Label();
             dataGridViewVisibleStars = new DataGridView();
             btnFindVisibleConstellations = new Button();
             btnFindVisibleStars = new Button();
@@ -67,6 +70,7 @@
             groupObservationDate = new GroupBox();
             dtObservationDate = new DateTimePicker();
             tabPage3 = new TabPage();
+            lblObservationStarEmptyError = new Label();
             datagridObservationHours = new DataGridView();
             colStarName = new DataGridViewTextBoxColumn();
             colObservationDate = new DataGridViewTextBoxColumn();
@@ -86,8 +90,7 @@
             btnFindHours = new Button();
             txtNameStarObservation = new TextBox();
             lblObserveStar = new Label();
-            label3 = new Label();
-            lblVisibleObjectsCount = new Label();
+            lblStarNotVisible = new Label();
             tabFindStar.SuspendLayout();
             tabPage1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -136,16 +139,24 @@
             // 
             // groupBox2
             // 
+            groupBox2.Controls.Add(lblEmptyStarError);
             groupBox2.Controls.Add(txtFindStar);
             groupBox2.Controls.Add(btnFindStar);
             resources.ApplyResources(groupBox2, "groupBox2");
             groupBox2.Name = "groupBox2";
             groupBox2.TabStop = false;
             // 
+            // lblEmptyStarError
+            // 
+            resources.ApplyResources(lblEmptyStarError, "lblEmptyStarError");
+            lblEmptyStarError.ForeColor = Color.Red;
+            lblEmptyStarError.Name = "lblEmptyStarError";
+            // 
             // txtFindStar
             // 
             resources.ApplyResources(txtFindStar, "txtFindStar");
             txtFindStar.Name = "txtFindStar";
+            txtFindStar.TextChanged += txtFindStar_TextChanged;
             // 
             // btnFindStar
             // 
@@ -203,6 +214,7 @@
             dataGridViewStars.Name = "dataGridViewStars";
             dataGridViewStars.ReadOnly = true;
             dataGridViewStars.RowTemplate.Height = 29;
+            dataGridViewStars.Paint += dataGridViewStars_Paint;
             // 
             // dataGridViewTextBoxColumn1
             // 
@@ -263,6 +275,16 @@
             tabPage2.Name = "tabPage2";
             tabPage2.UseVisualStyleBackColor = true;
             // 
+            // lblVisibleObjectsCount
+            // 
+            resources.ApplyResources(lblVisibleObjectsCount, "lblVisibleObjectsCount");
+            lblVisibleObjectsCount.Name = "lblVisibleObjectsCount";
+            // 
+            // label3
+            // 
+            resources.ApplyResources(label3, "label3");
+            label3.Name = "label3";
+            // 
             // dataGridViewVisibleStars
             // 
             dataGridViewVisibleStars.AllowUserToAddRows = false;
@@ -275,6 +297,7 @@
             dataGridViewVisibleStars.ReadOnly = true;
             dataGridViewVisibleStars.RowHeadersVisible = false;
             dataGridViewVisibleStars.RowTemplate.Height = 29;
+            dataGridViewVisibleStars.Paint += dataGridViewVisibleStars_Paint;
             // 
             // btnFindVisibleConstellations
             // 
@@ -379,6 +402,8 @@
             // 
             // tabPage3
             // 
+            tabPage3.Controls.Add(lblStarNotVisible);
+            tabPage3.Controls.Add(lblObservationStarEmptyError);
             tabPage3.Controls.Add(datagridObservationHours);
             tabPage3.Controls.Add(groupBox3);
             tabPage3.Controls.Add(btnFindHours);
@@ -387,6 +412,12 @@
             resources.ApplyResources(tabPage3, "tabPage3");
             tabPage3.Name = "tabPage3";
             tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // lblObservationStarEmptyError
+            // 
+            resources.ApplyResources(lblObservationStarEmptyError, "lblObservationStarEmptyError");
+            lblObservationStarEmptyError.ForeColor = Color.Red;
+            lblObservationStarEmptyError.Name = "lblObservationStarEmptyError";
             // 
             // datagridObservationHours
             // 
@@ -399,6 +430,7 @@
             datagridObservationHours.Name = "datagridObservationHours";
             datagridObservationHours.ReadOnly = true;
             datagridObservationHours.RowTemplate.Height = 29;
+            datagridObservationHours.Paint += datagridObservationHours_Paint;
             // 
             // colStarName
             // 
@@ -509,21 +541,18 @@
             // 
             resources.ApplyResources(txtNameStarObservation, "txtNameStarObservation");
             txtNameStarObservation.Name = "txtNameStarObservation";
+            txtNameStarObservation.TextChanged += txtNameStarObservation_TextChanged;
             // 
             // lblObserveStar
             // 
             resources.ApplyResources(lblObserveStar, "lblObserveStar");
             lblObserveStar.Name = "lblObserveStar";
             // 
-            // label3
+            // lblStarNotVisible
             // 
-            resources.ApplyResources(label3, "label3");
-            label3.Name = "label3";
-            // 
-            // lblVisibleObjectsCount
-            // 
-            resources.ApplyResources(lblVisibleObjectsCount, "lblVisibleObjectsCount");
-            lblVisibleObjectsCount.Name = "lblVisibleObjectsCount";
+            resources.ApplyResources(lblStarNotVisible, "lblStarNotVisible");
+            lblStarNotVisible.ForeColor = Color.Red;
+            lblStarNotVisible.Name = "lblStarNotVisible";
             // 
             // Form1
             // 
@@ -637,6 +666,9 @@
         private Label lblStarsCount;
         private Label lblVisibleObjectsCount;
         private Label label3;
+        private Label lblEmptyStarError;
+        private Label lblObservationStarEmptyError;
+        private Label lblStarNotVisible;
     }
 }
 

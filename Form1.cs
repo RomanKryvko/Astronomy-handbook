@@ -42,6 +42,14 @@ namespace Довідник_астронома
         {
             string searchText = txtFindStar.Text;
 
+            if (string.IsNullOrEmpty(searchText))
+            {
+                starBindingSource.DataSource = new List<Star>();
+                lblStarsCount.Text = "0";
+                lblEmptyStarError.Visible = true;
+                return;
+            }
+
             using (var context = new StarContext())
             {
                 // search by star name
@@ -186,7 +194,17 @@ namespace Довідник_астронома
 
         private void btnFindHours_Click(object sender, EventArgs e)
         {
+            lblStarNotVisible.Visible = false;
+
             string searchText = txtNameStarObservation.Text;
+
+            if (string.IsNullOrEmpty(searchText))
+            {
+                lblObservationStarEmptyError.Visible = true;
+                datagridObservationHours.DataSource = null;
+                return;
+            }
+
             Star? star = null;
             using (var context = new StarContext())
             {
@@ -197,7 +215,7 @@ namespace Довідник_астронома
 
             if (star == null)
             {
-                datagridObservationHours.DataSource = null;
+                datagridObservationHours.DataSource = new StarObservation();
                 return;
             }
 
@@ -216,13 +234,16 @@ namespace Довідник_астронома
                 longitude = -longitude;
             }
 
-            // TODO: calculate star rise and set time
+            TimeSpan? riseTime;
+            TimeSpan? setTime;
+            (riseTime, setTime) = star.GetObservationHours(longitude, latitude);
+
             StarObservation starObservation = new StarObservation
             {
                 StarName = star.Name,
                 ObservationDate = DateTime.Today,
-                StarRiseTime = new TimeSpan(1, 12, 45),
-                StarSetTime = new TimeSpan(3, 30, 55)
+                StarRiseTime = riseTime,
+                StarSetTime = setTime
             };
 
             datagridObservationHours.Columns[0].DataPropertyName = "StarName";
@@ -231,6 +252,54 @@ namespace Довідник_астронома
             datagridObservationHours.Columns[3].DataPropertyName = "StarSetTime";
 
             datagridObservationHours.DataSource = new BindingSource { DataSource = starObservation };
+
+            if (starObservation.StarRiseTime == null && starObservation.StarSetTime == null)
+            {
+                lblStarNotVisible.Visible = true;
+            }
+        }
+
+        private void dataGridViewStars_Paint(object sender, PaintEventArgs e)
+        {
+            if (dataGridViewStars.Rows.Count == 0)
+            {
+                TextRenderer.DrawText(e.Graphics, "Зірки чи сузір'я не знайдені",
+                    dataGridViewStars.Font, dataGridViewStars.ClientRectangle,
+                    Color.Red, dataGridViewStars.BackgroundColor,
+                    TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+            }
+        }
+
+        private void txtFindStar_TextChanged(object sender, EventArgs e)
+        {
+            lblEmptyStarError.Visible = false;
+        }
+
+        private void dataGridViewVisibleStars_Paint(object sender, PaintEventArgs e)
+        {
+            if (dataGridViewVisibleStars.Rows.Count == 0 && dataGridViewVisibleStars.DataSource != null)
+            {
+                TextRenderer.DrawText(e.Graphics, "Видимі зірки чи сузір'я не знайдені",
+                    dataGridViewVisibleStars.Font, dataGridViewVisibleStars.ClientRectangle,
+                    Color.Red, dataGridViewVisibleStars.BackgroundColor,
+                    TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+            }
+        }
+
+        private void txtNameStarObservation_TextChanged(object sender, EventArgs e)
+        {
+            lblObservationStarEmptyError.Visible = false;
+        }
+
+        private void datagridObservationHours_Paint(object sender, PaintEventArgs e)
+        {
+            if (datagridObservationHours.Rows.Count == 0 && datagridObservationHours.DataSource != null)
+            {
+                TextRenderer.DrawText(e.Graphics, "Зірки з заданою назвою не знайдено",
+                    datagridObservationHours.Font, datagridObservationHours.ClientRectangle,
+                    Color.Red, datagridObservationHours.BackgroundColor,
+                    TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+            }
         }
     }
 }
